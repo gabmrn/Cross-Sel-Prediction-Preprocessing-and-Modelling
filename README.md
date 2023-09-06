@@ -215,6 +215,8 @@ Features Importance
     <img src="image/8.png", alt="datatest">
 </p>
 
+Pada model **`XGBoost`**, 2 *features* yang memiliki *importance* terbesar adalah `Previously_Insured` dan `Vehicle_Damage` sedangkan 2 *features* yang paling rendah adalah `Policy_Sales_Channel` dan `Vehicle_Age`.
+
 Shap Values Summary
 <p align="center">
     <img src="image/9.png", alt="datatest">
