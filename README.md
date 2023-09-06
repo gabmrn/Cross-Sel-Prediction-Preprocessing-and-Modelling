@@ -1,4 +1,4 @@
-# Data Pre-processing and Feature Engineering
+# Data Pre-processing, Feature Engineering, and Modelling
 Tahapan selanjutnya setelah melakukan *Exploratory Data Analysis* di Stage 1 adalah melakukan *Data Pre-processing* dan *Feature Engineering*. Tahapan ini sangatlah penting dilakukan sebelum melakukan modeling pada *Machine Learning*. 
 
 Setelah melakukan eksplorasi data pada tahap sebelumnya telah didapatkan beragam pengetahuan mengenai dataset yang sedang kita olah dan penanganan apa saja yang mungkin kita lakukan terhadap dataset tersebut agar dataset lebih siap digunakan dan juga meningkatkan performa model nantinya.
@@ -20,6 +20,10 @@ Pada dasarnya proses ini berlangsung secara iteratif,
 <p style="text-align: center;"><--------------------------------------------------------------------</p>
 
 <br>
+
+Modeling dalam *machine learning* merujuk pada proses pembangunan model statistik atau komputasi yang dapat digunakan untuk membuat prediksi atau mengambil keputusan berdasarkan data yang diberikan. Ini adalah salah satu langkah penting dalam proses *machine learning* dan *data science*.
+
+Modelling ini merupakan *supervised learning classification* yang dimana hasilnya merupaka prediksi label 'Yes' / 'No' (1/0).
 
 # Dataset Description
 Sebelum melanjutkan ke inti pembahasan, berikut disertakan kembali deskripsi mengenai dataset,
@@ -57,6 +61,11 @@ Sebelum melanjutkan ke inti pembahasan, berikut disertakan kembali deskripsi men
 - Feature Engineering - Feature Extraction
 - Feature Engineering - Feature Recommendation
 - Data Preprocessing - Feature Transformation
+- Conclusion Preprocessing
+- Modelling
+- Evaluasi
+- Conclusion Modelling
+
 
 ## Data Preprocessing - Missing Values
 Melakukan pengecekan missing values dengan menggunakan `.isna()`/`.isnull()` . Serta melakukan pengecekan karakter tertentu yang mungkin termasuk NaN/NULL. 
@@ -83,7 +92,7 @@ Diputuskan untuk tetap menggunakan dataframe df karena, kolom `Annual_Premium` m
 Mengubah `Vehicle_Damage` ke integer dalam = 0: Kendaraan customer belum pernah rusak, 1: Kendaraan customer sudah pernah rusak, serta `Vehicle_Age` dam 0: < 1 Year, 1: 1-2 Years, 2: > 2 Years. Serta `Gender` dengan *One Hot Encoding*. Melakukan konversi ke angka mulai dari 0 untuk memudahkan kerja machine learning. Mengubah kolom dengan datatype bool ke integer agar lebih mudah diproses oleh model.
 
 ## Data Preprocessing - Class Imbalance
-Penanganan Class Imbalance dilakukan dengan ***undersampling*** dengan pertimbangan agar data tidak cenderung bias, dimana selisih antara kedua value 0 dan 1 lebih dari 50% sehingga jika dilakukan *oversampling* tidak menjamin akan adanya peningkatan performansi machine learning.
+Penanganan Class Imbalance dilakukan dengan ***oversampling*** dan ***undersampling*** dengan pertimbangan agar data tidak cenderung bias, dimana selisih antara kedua value 0 dan 1 lebih dari 50% sehingga jika dilakukan *oversampling* tidak menjamin akan adanya peningkatan performansi machine learning, namun dibutuhkan pula oversampling agar data tidak underfit.
 
 ## Feature Engineering - Feature Selection
 Dilakukan penghapusan feature `id` yang tidak relevan terhadap model dengan `.drop()`. Lalu dilakukan pengecekan korelasi antar kolom dengan menggunakan heatmap.
@@ -129,10 +138,93 @@ Data Train
 
 Data Test
 <p align="center">
-    <img src="image/4.png", alt="datatest">
+    <img src="image/5.png", alt="datatest">
 </p>
 
-# Conclusion
-Features yang dipilih `Region_Code`, `Vehicle_Age`, `Vehicle_Damage`, `Annual_Premium`, `Policy_Sales_Channel`, `Gen_Female`, `Gen_Male`, `Age_Group`, `Premium_cat`.
+Korelasi Heatmap
+<p align="center">
+    <img src="image/6.png", alt="heatmap3">
+</p>
+
+## Conclusion Pre-processing
+Diputuskan menggunakan `standardscaler`.
+
+Features yang dipilih `Vehicle_Age`, `Vehicle_Damage`, `Previously_Insured`, `Gen_Female`, `Gen_Male`, `Age_Group`, `Region_cat`, `std_Annual_Premium`.
 
 Sedangkan targetnya adalah `Response`.
+
+## Modelling
+Setelah dilakukan modelling pada *features* `Vehicle_Age`,`Vehicle_Damage`,`Previously_Insured`,`Gen_Female`,`Gen_Male`,`Age_Group`,`Region_cat`,`std_Annual_Premium` menggunakan algoritma `Logistic Regression`, `K-Nearest Neighbor`, `Decision Tree`, `XGBoost`, `Random Forest`, `LightGBM`, `Gradient Boost` didapatkan hasil bahwa model-model *overfitting*,
+
+|Model|Accuracy Test|Accuracy Train|Precision Test|Precision Train|Recall Test|Recall Train|F1 Test|F1 Train|ROC AUC Test|ROC AUC Train|ROC AUC CrossVal Test|ROC AUC CrossVal Train|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|Logistic|0.79|0.78|0.71|0.71|0.98|0.98|0.82|0.82|0.82|0.82|0.99|0.80|
+|KNN|0.76|0.81|0.72|0.77|0.82|0.88|0.77|0.82|0.81|0.89|0.99|0.80|
+|Decision Tree|0.72|0.95|0.71|0.93|0.75|0.97|0.73|0.95|0.73|0.99|0.99|0.80|
+|XGBoost|0.79|0.80|0.72|0.73|0.93|0.94|0.81|0.82|0.83|0.87|0.99|0.80|
+|Random Forest|0.73|0.95|0.71|0.92|0.76|0.98|0.73|0.95|0.81|0.99|0.99|0.80|
+|LightGBM|0.79|0.79|0.72|0.73|0.93|0.94|0.81|0.82|0.84|0.85|0.99|0.80|
+|Gradient Boost|0.79|0.79|0.72|0.72|0.93|0.94|0.82|0.82|0.84|0.84|0.99|0.80|
+
+
+Sehingga diputuskan untuk melakukan regularization dan hyperparameter tuning lain namun model masih overfitting maka dipertimbangkan untuk melakukan features selection ulang dan penambahan data (sudah dilakukan di preprocessing).
+
+New Features Selection, `Vehicle_Age`,`Vehicle_Damage`,`Previously_Insured`,`Age_Group`,`Region_cat`,`Policy_Sales_Channel`,`Gen_Female`,`Gen_Male`.
+
+## Evaluasi
+
+**Hasil Score Modelling**
+|Model|Accuracy Test|Accuracy Train|Precision Test|Precision Train|Recall Test|Recall Train|F1 Test|F1 Train|ROC AUC Test|ROC AUC Train|ROC AUC CrossVal Test|ROC AUC CrossVal Train|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|Logistic|0.79|0.79|0.72|0.72|0.93|0.94|0.82|0.82|0.87|0.87|0.93|0.92|
+|KNN|0.79|0.80|0.78|0.78|0.83|0.83|0.80|0.80|0.89|0.89|0.93|0.92|
+|Decision Tree|0.82|0.83|0.78|0.79|0.89|0.90|0.83|0.84|0.91|0.93|0.93|0.92|
+|XGBoost|0.82|0.83|0.78|0.78|0.91|0.91|0.84|0.84|0.92|0.92|0.93|0.92|
+|Random Forest|0.82|0.83|0.78|0.79|0.89|0.90|0.83|0.84|0.92|0.93|0.93|0.92|
+|LightGBM|0.82|0.82|0.77|0.77|0.91|0.91|0.84|0.84|0.92|0.92|0.93|0.92|
+|Gradient Boost|0.82|0.82|0.76|0.76|0.93|0.92|0.84|0.84|0.91|0.91|0.93|0.92|
+
+
+**Hasil Score Hyperparameter Tuning**
+|Model|Accuracy Test|Accuracy Train|Precision Test|Precision Train|Recall Test|Recall Train|F1 Test|F1 Train|ROC AUC Test|ROC AUC Train|ROC AUC CrossVal Test|ROC AUC CrossVal Train|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|Logistic|0.78|0.79|0.71|0.71|0.96|0.95|0.82|0.82|0.87|0.87|0.93|0.92|
+|Decision Tree|0.79|0.79|0.73|0.72|0.94|0.94|0.82|0.82|0.86|0.86|0.93|0.92|
+|XGBoost|0.82|0.82|0.76|0.76|0.94|0.94|0.84|0.84|0.92|0.92|0.93|0.92|
+|Random Forest|0.81|0.81|0.74|0.74|0.95|0.95|0.83|0.83|0.89|0.89|0.93|0.92|
+|LightGBM|0.82|0.82|0.77|0.77|0.92|0.92|0.84|0.84|0.92|0.92|0.93|0.92|
+|Gradient Boost|0.82|0.82|0.76|0.76|0.93|0.93|0.84|0.83|0.91|0.91|0.93|0.92|
+
+Dari karakteristik dataset yang sudah tidak memiliki *class imbalance* serta tujuan bisnis, evaluasi akan menitik beratkan pada score ***recall*** dimana meminimalisir False Negative serta ***ROC AUC*** score untuk menilai sejauh mana model mampu membedakan kelas (TPR dan FPR) walaupun *class* sudah seimbang.
+
+Dari score diatas didapatkan model yang memiliki score yang baik untuk prediksi klasifikasi adalah model hasil algoritma `XGBoost`, `LightGBM`, `Random Forest` dan `Gradient Boost`.
+
+## Conclusion Modelling
+## The Best Fit Model
+
+### **`XGBoost Model`**
+Model ini memiliki score recall yang tinggi yakni mencapai **0.94** dengan probabilitas machine learning sebesar **0.92** dan AUC ROC mencapai **0.91** pada hasil test data. Sedangkan pada train data nya hanya memiliki selisih terbesar 0.02 dari test data, yakni model tidak overfit maupun underfit yang dapat disebut sebagai model ***best fit***.
+
+Confusion Matrix
+<p align="center">
+    <img src="image/7.png", alt="datatest">
+</p>
+
+Features Importance
+<p align="center">
+    <img src="image/8.png", alt="datatest">
+</p>
+
+Shap Values Summary
+<p align="center">
+    <img src="image/9.png", alt="datatest">
+</p>
+
+* `'Previously_Insured'`: Value yang bernilai tinggi memiliki kontribusi negatif dengan hasil prediksi sedangkan value yang nilainya rendah memiliki kontribusi positif terhadap hasil prediksi.
+* `'Policy_Sales_Channel'`: Semakin tinggi value berdampak kontribusi negatif terhadap prediksi sedangkan semakin rendah value memiliki kontribusi positif terhadap hasil prediksi.
+* `'Vehicle_Damage'`: Semakin value bernilai tinggi memiliki kontribusi positif terhadap prediksi dan semakin rendah nilai value memiliki kontibusi negatif terhadap prediksi.
+* `'Region_cat'`: Value yang bernilai tengah ke tinggi memiliki kontribusi negatif terhadap prediksi dan sebaliknya value yang bernilai rendah memiliki kontribusi yang positif.
+* `'Gen_Female'`: Value tinggi berkontribusi negatif dan value rendah berkontribusi positif.
+* `'Gen_Male'`: Value tinggi berkontribusi negatif dan value rendah berkontribusi positif.
+* `'Age_Group'`: Value yang bernilai rendah dan tinggi memiliki kontibusi yang negatif terhadap prediksi sedangkan value yang memiliki nilai ditengah-tengah memiliki kontribusi yang positif.
+* `'Vehicle_Age'`: Semakin tinggi value semakin negatif kontribusinya, dan semakin rendah value semakin positif kontribusinya terhadap prediksi.
