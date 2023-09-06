@@ -46,12 +46,14 @@ Sebelum melanjutkan ke inti pembahasan, berikut disertakan kembali deskripsi men
 <br>
 
 # Prerequisites
+
 1. Dataset download [`here`](https://www.kaggle.com/datasets/anmolkumar/health-insurance-cross-sell-prediction?select=train.csv).
 2. `pip install requirement.txt`.
 
 <br>
 
 # Table of Contents
+
 - Data Preprocessing - Missing Values
 - Data Preprocessing - Duplicated Values
 - Data Preprocessing - Outliers
@@ -68,6 +70,7 @@ Sebelum melanjutkan ke inti pembahasan, berikut disertakan kembali deskripsi men
 
 
 ## Data Preprocessing - Missing Values
+
 Melakukan pengecekan missing values dengan menggunakan `.isna()`/`.isnull()` . Serta melakukan pengecekan karakter tertentu yang mungkin termasuk NaN/NULL. 
 
 Setelah dilakukan pengecekan terhadap NULL/NaN values, tidak terdapat NULL/NaN pada dataset.
@@ -79,6 +82,7 @@ Melakukan pengecekan duplicated values dengan menggunakan `.duplicated()` dan ju
 Setelah dilakukan pengecekan terhadap duplicated values, tidak terdapat data duplikasi pada dataset.
 
 ## Data Preprocessing - Outliers
+
 Dari insight yang didapat ketika EDA yang telah dilakukan di Stage 1, kita tahu `Annual Premium` memiliki outliers yang cukup extreme sehingga ditangani dengan penghapusan IQR ataupun capping.
 
 Setelah melakukan handling outliers dengan metode IQR dan Capping dan didapatkan hasil,
@@ -89,12 +93,15 @@ Setelah melakukan handling outliers dengan metode IQR dan Capping dan didapatkan
 Diputuskan untuk tetap menggunakan dataframe df karena, kolom `Annual_Premium` merupakan hal yang normal jika terdapat outliers sehingga tidak dilakukan penghapusan outliers. Hal ini juga didasarkan dengan pertimbangan pembuatan model yang robust terhadap outliers.
 
 ## Data Preprocessing - Feature Encoding
+
 Mengubah `Vehicle_Damage` ke integer dalam = 0: Kendaraan customer belum pernah rusak, 1: Kendaraan customer sudah pernah rusak, serta `Vehicle_Age` dam 0: < 1 Year, 1: 1-2 Years, 2: > 2 Years. Serta `Gender` dengan *One Hot Encoding*. Melakukan konversi ke angka mulai dari 0 untuk memudahkan kerja machine learning. Mengubah kolom dengan datatype bool ke integer agar lebih mudah diproses oleh model.
 
 ## Data Preprocessing - Class Imbalance
+
 Penanganan Class Imbalance dilakukan dengan ***oversampling*** dan ***undersampling*** dengan pertimbangan agar data tidak cenderung bias, dimana selisih antara kedua value 0 dan 1 lebih dari 50% sehingga jika dilakukan *oversampling* tidak menjamin akan adanya peningkatan performansi machine learning, namun dibutuhkan pula oversampling agar data tidak underfit.
 
 ## Feature Engineering - Feature Selection
+
 Dilakukan penghapusan feature `id` yang tidak relevan terhadap model dengan `.drop()`. Lalu dilakukan pengecekan korelasi antar kolom dengan menggunakan heatmap.
 
 <p align="center">
@@ -104,6 +111,7 @@ Dilakukan penghapusan feature `id` yang tidak relevan terhadap model dengan `.dr
 Dari heatmap dapat didapatkan insight bahwa, `Age` dan `Vehicle_Age` merupakan kolom redundant sehingga diputuskan untuk tidak menggunakan pada kolom `Age` dengan pertimbangan kolom `Age` memiliki korelasi lebih kecil dibandingkan `Vehicle_Age`.
 
 ## Feature Engineering - Feature Extraction
+
 *Feature Extraction* yang dibuat antara lain,
 1. Age_Group, melakukan *dimension reduction* dengan mengelompokan feature `Age` menjadi 3 kategori utama dengan range YoungAdults 17 - 30 yang diwakili dengan 0, MiddleAged 31-45 diwakili dengan 1, OldAdults > 45 diwakili dengan 2.
 
@@ -120,6 +128,7 @@ Dari heatmap dapat didapatkan insight bahwa, `Age` dan `Vehicle_Age` merupakan k
 Dari hasil *feature extraction* didapatkan heatmap baru bahwa `Policy_cat` tidak memiliki korelasi dengan `Response`, sedangkan `Age_Group` dan `Premium_cat` memiliki korelasi *positive*.
 
 ## Feature Engineering - Feature Recommendation
+
 1. `Premium_Per_Channel`, untuk menghitung dan memberi insight baru mengenai total premium dari berbagai `Policy_Sales_Channel` dengan begitu pengelompokkan Channel dapat dilakukan berdasarkan `Annual_Premium`.
 
 2. `Vintage_Group`, feature baru yang mengubah feature `Vintage` menjadi kategori dengan range tertentu dimana diartikan menjadi New (baru bergabung), Intermediate (sudah bergabung cukup lama), Long-term (sudah bergabung lama).
@@ -129,6 +138,7 @@ Dari hasil *feature extraction* didapatkan heatmap baru bahwa `Policy_cat` tidak
 4. `Channel_Response_Rate`, merupakan rate respon dari tiap channel dimana menindikasikan seberapa efektif suatu channel untuk mendapatkan jawaban 'Yes' dari sini juga dapat dilakukan pengelompokkan Channels yang memiliki rate tinggi.
 
 ## Data Preprocessing - Feature Transformation
+
 Melakukan transformasi terhadap kolom yang bukan merupakan kategori (numerik) namun merupakan kolom yang memang berupakan numerik (range). Sebelum dilakukan tranformasi dilakukan split test train dahulu untuk mencegah *Data Leakege*. Transformasi ini dilakukan dengan menggunakan metode boxcox.
 
 Data Train
@@ -147,13 +157,15 @@ Korelasi Heatmap
 </p>
 
 ## Conclusion Pre-processing
-Diputuskan menggunakan `standardscaler`.
+
+Diputuskan menggunakan `StandardScaler`.
 
 Features yang dipilih `Vehicle_Age`, `Vehicle_Damage`, `Previously_Insured`, `Gen_Female`, `Gen_Male`, `Age_Group`, `Region_cat`, `std_Annual_Premium`.
 
 Sedangkan targetnya adalah `Response`.
 
 ## Modelling
+
 Setelah dilakukan modelling pada *features* `Vehicle_Age`,`Vehicle_Damage`,`Previously_Insured`,`Gen_Female`,`Gen_Male`,`Age_Group`,`Region_cat`,`std_Annual_Premium` menggunakan algoritma `Logistic Regression`, `K-Nearest Neighbor`, `Decision Tree`, `XGBoost`, `Random Forest`, `LightGBM`, `Gradient Boost` didapatkan hasil bahwa model-model *overfitting*,
 
 |Model|Accuracy Test|Accuracy Train|Precision Test|Precision Train|Recall Test|Recall Train|F1 Test|F1 Train|ROC AUC Test|ROC AUC Train|ROC AUC CrossVal Test|ROC AUC CrossVal Train|
